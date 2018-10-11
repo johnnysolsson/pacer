@@ -1,0 +1,2 @@
+# pacer
+Calculate your run
