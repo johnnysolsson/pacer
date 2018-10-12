@@ -1,19 +1,14 @@
 import React from 'react';
 
-const TextBox = props => {
-    return (
-        <input type="text" className={ props.name } placeholder={ props.placeholder } />
-    );
-};
-
-
-/*
-class Input extends React.Component  {
+class TextBox extends React.Component {
     render(){
+        const { name, placeholder } = this.props;
+     ;
       return (
-          <input type="text" className="pace" placeholder="Input pace"></input>
-      );
-    }
-  }
-*/
+        <input type="text" className={name} placeholder={placeholder} onClick={ function(){ alert('So!?'); }} />
+    );
+}
+
+}
+
 export default TextBox;
