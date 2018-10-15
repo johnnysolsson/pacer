@@ -1,29 +1,44 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Form from './components/Form.jsx';
+import Form  from './components/Form.jsx';
+import calculate from './logic/Calculate.js';
+import './sass/App.scss';
 
 class App extends React.Component {
-    render() {
-      return (
-        <div>
-          <h1>Fill in!</h1>
-          <Form />
-          <p>
-              Populate any two input fields to calculate the third. 
-          </p>
-        </div>
-      );
-    }
+  
+  handleClick = textboxName => {
+    this.setState(calculate(this.state, textboxName));
   }
 
-  //ReactDOM.render(React.createElement(App), document.getElementById("root"));
+  render() {
+    return (
+      <div className="component-app">
+        <div className="container">
+          <div className="row">
 
-/*
-class App extends React.Component {
-    render(){
-        return <h1>Hello world!</h1>;
-    }
+            <div className="col-sm-4 col-md-4">
+            </div>            
+
+            <div className="col-sm-4 col-md-4">
+              <h1>Pacer</h1>
+              
+              <Form clickHandler={this.handleClick} />
+
+              <p>
+                Populate any two input fields to calculate the third. 
+              </p>
+              <p>
+                Doubleclick or -tap to lock textbox. 
+              </p>              
+            </div>
+
+            <div className="col-sm-4 col-md-4">
+            </div> 
+
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
-*/
 export default App;

@@ -1,24 +1,33 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TextBox from './TextBox.jsx';
 
-class Pacer extends React.Component  {
+class Form extends React.Component  {
+  
+  handleClick = textboxName => {
+    this.props.clickHandler(textboxName);
+  }
+
   render(){
     return (
-      <form id="pacerForm">
-        
+      <form id="component-textbox-form">        
         <div className="row">
-          <TextBox name="distance" placeholder="Enter distance covered" />
+          <div className="textBoxTitle">Distance</div>
+            <TextBox 
+              name="distance" 
+              placeholder="Enter distance covered" 
+              clickHandler={this.handleClick} />
+          </div>
+        <div className="row">
+          <div className="textBoxTitle">Time spent</div>       
+            <TextBox name="time" placeholder="Enter time spent" />
         </div>
         <div className="row">
-          <TextBox name="time" placeholder="Enter time spent" />
-        </div>
-        <div className="row">
+        <div className="textBoxTitle">Pace</div>
           <TextBox name="pace" placeholder="Enter pace" />
         </div>
-       
       </form>
     );
   }
 }
 
-export default Pacer;
+export default Form;

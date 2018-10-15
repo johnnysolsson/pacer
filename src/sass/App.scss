@@ -1,0 +1,32 @@
+// SASS variables
+@import '_variables';
+
+body{
+    background-color: $color-bg-primary;
+    color: $color-text-primary;
+    font-size: 1.8vw;
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+input{
+    background-color: $color-bg-secondary;
+    color: $color-text-secondary;
+    border-radius: 3px;
+    border: 1px solid $color-bg-secondary;
+    margin: 1rem;
+    width: 100%;
+    padding: .5rem 1rem .5rem 1rem;
+}
+
+input:focus{
+    border: 1px solid $color-text-secondary;
+}
+
+.textBoxTitle{
+    font-size: 1.2rem;
+    margin: 0 0 -1rem 1rem;
+    font-weight: $text-bold;
+    text-transform: uppercase;
+}
