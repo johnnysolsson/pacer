@@ -11,19 +11,19 @@ class Form extends React.Component  {
     return (
       <form id="component-textbox-form">        
         <div className="row">
-          <div className="textBoxTitle">Distance</div>
+          <h3>Distance</h3>
             <TextBox 
               name="distance" 
               placeholder="Enter distance covered" 
               clickHandler={this.handleClick} />
           </div>
         <div className="row">
-          <div className="textBoxTitle">Time spent</div>       
+          <h3>Time</h3>       
             <TextBox name="time" placeholder="Enter time spent" />
         </div>
         <div className="row">
-        <div className="textBoxTitle">Pace</div>
-          <TextBox name="pace" placeholder="Enter pace" />
+        <h3>Speed</h3>
+          <TextBox name="pace" placeholder="Enter speed" />
         </div>
       </form>
     );
