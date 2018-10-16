@@ -1,12 +1,12 @@
 import React from 'react';
-import Form  from './components/Form.jsx';
-import calculate from './logic/Calculate.js';
+import Form  from './component/Form';
+import calculate from './logic/calculate.js';
 import './sass/App.scss';
 
 class App extends React.Component {
   
   handleClick = textboxName => {
-    this.setState(calculate(this.state, textboxName));
+    calculate(this.state, textboxName);
   }
 
   render() {

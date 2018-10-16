@@ -24,22 +24,43 @@ h1{
 }
 
 h3{
-    color: $color-text-quartiary;
+    color: $color-text-quarternary;
     font-size: 1.2rem;
     margin: 1rem 0 -1rem 1.5rem;
+}
+
+.textbox{
+    background-color: $color-bg-secondary;
+    border-radius: 3px;
+    border: 1px solid $color-bg-secondary;
+    display: block;
+    margin-top: 1.5rem;
+    padding: 0;
+}
+
+.textbox:focus,
+.textbox:hover{
+    border: 1px solid $color-text-secondary;
 }
 
 input{
     background-color: $color-bg-secondary;
     color: $color-text-secondary;
-    border-radius: 3px;
-    border: 1px solid $color-bg-secondary;
-    margin: 1rem;
-    width: 100%;
+    border: none;
+    width: 80%;
     padding: .5rem 1rem .5rem 1rem;
     letter-spacing: $letter-spacing;
 }
 
-input:focus{
-    border: 1px solid $color-text-secondary;
+.lock{
+    width: 10%;
+    float: right;
+    padding: .5rem 0 .5rem 0;
+    border: none;
+    background-color: $color-bg-secondary;
+}
+
+.lock:hover{
+    background-color: $color-text-secondary;
+    color: $color-bg-secondary;
 }

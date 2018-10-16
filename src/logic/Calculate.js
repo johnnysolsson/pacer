@@ -1,3 +1,3 @@
-export default function calculate(obj, textBoxName){
-    return
+export default function calculate() {
+    alert('FOO');
 }
