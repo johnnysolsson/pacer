@@ -7,6 +7,9 @@ class TextBox extends React.Component {
 
         this.state = {
             readOnly: false,
+            bgColor: '#434346',
+            textColor: '#ffffff',
+            borderColor : '#434346',
             value: this.props.defaultValue
         };
     }
@@ -18,11 +21,20 @@ class TextBox extends React.Component {
      };
  
      handleLock = (e) => {
-        let value = e.target.previousElementSibling.className;
         this.setState(prevState => ({readOnly: !prevState.readOnly}));
-        alert(value + ' is locked!');
-        //console.log(e.target.previousElementSibling.className);
-        };
+        
+        //Toggle backgroundcolor of input
+        if(this.state.bgColor === '#333336') this.setState({bgColor : '#434346'});
+            else this.setState({bgColor : '#333336'});
+        
+        //Toggle textcolor input text
+        if(this.state.textColor === '#a0a0a0') this.setState({textColor : '#e0e0e0'});
+            else this.setState({textColor : '#a0a0a0'});
+
+        //Toggle bordercolor of textBox
+        if(this.state.borderColor === '#f0a080') this.setState({borderColor : '#434346'});
+            else this.setState({borderColor : '#f0a080'});
+    };
  
 
     render(){
@@ -30,7 +42,7 @@ class TextBox extends React.Component {
         
         return (
             <fragment>
-                <div className="textbox">
+                <div className="textbox" style={{borderColor: this.state.borderColor}}>
                     <input 
                         type="text" 
                         className={ name } 
@@ -38,9 +50,10 @@ class TextBox extends React.Component {
                         title={ placeholder }
                         value={ this.state.value }
                         onChange={ this.handleEdit }
-                        readOnly={ this.state.readOnly } 
+                        readOnly={ this.state.readOnly }
+                        style={{backgroundColor: this.state.bgColor, color: this.state.textColor}}  
                     />
-                    <div className="lock" name={ name } alt={name} title={ 'Lock ' + name } onClick={ this.handleLock }>X</div> 
+                    <div className="lock" name={ name } alt={name} title={ 'Lock ' + name } style={{backgroundColor: this.state.bgColor, color: this.state.textColor}} onClick={ this.handleLock }>X</div> 
                 </div>
             </fragment>
         );
@@ -48,3 +61,5 @@ class TextBox extends React.Component {
 }
 
 export default TextBox;
+
+//TODO: Make toggling style more SASSY than js

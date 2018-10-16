@@ -13,9 +13,7 @@ class Form extends React.Component  {
         <div className="row">
           <h3>Distance</h3>
             <TextBox 
-              name="Distance" 
-              placeholder="Enter distance covered" 
-              clickHandler={this.handleClick} 
+              name="Distance" placeholder="Enter distance covered" 
             />
           </div>
         <div className="row">
@@ -32,3 +30,5 @@ class Form extends React.Component  {
 }
 
 export default Form;
+
+//TODO: Make array of textboxes

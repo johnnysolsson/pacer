@@ -47,9 +47,10 @@ input{
     background-color: $color-bg-secondary;
     color: $color-text-secondary;
     border: none;
-    width: 80%;
+    width: 90%;
     padding: .5rem 1rem .5rem 1rem;
     letter-spacing: $letter-spacing;
+    font-weight: $font-weight-bold;
 }
 
 .lock{
@@ -58,9 +59,12 @@ input{
     padding: .5rem 0 .5rem 0;
     border: none;
     background-color: $color-bg-secondary;
+    text-align: center;
+    color: $color-text-secondary;
 }
 
 .lock:hover{
     background-color: $color-text-secondary;
-    color: $color-bg-secondary;
+    color: $color-text-secondary;
+    cursor: pointer;
 }
