@@ -1,15 +1,18 @@
 import React, {useState, useEffect} from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarAlt, faRulerHorizontal, faShoePrints, faClock } from '@fortawesome/free-solid-svg-icons';
 
 const History = (props) => {
 
   const [history, setHistory] = useState([{}]);
   const [historyFetched, setHistoryFetched] = useState(false);
 
-  const	handleToUpdate	=	props.handleToUpdate;
+  const	handleUpdate	=	props.handleUpdate;
 
   const getHistory = async (e) => {
     e ? e.preventDefault() : undefined;
     let response = '';
+    const maxEntries = 5;
     const url = 'http://localhost:4242/history';
     try{
       response = await fetch(url, {
@@ -26,15 +29,28 @@ const History = (props) => {
     }catch (error){
       console.error('Oh my! Got an error: ', error.message);
     }
-    const result = await response.json();
-    setHistory(result);
+
+    // Get the list from response
+    let list = await response.json();
+
+    // Get only the last max number of entries from history
+    list = list.filter((el, index) => {
+      return index >= list.length - maxEntries;
+    });
+
+    // Sort the list to show the latest entries first
+    list.sort((a,b) => {
+      return new Date(b.date) - new Date(a.date);
+    });
+
+    setHistory(list);
     setHistoryFetched(true);
   };
 
   useEffect(() => {
-    !historyFetched ? getHistory(null) : undefined;
-  }, [historyFetched]);
-
+    !historyFetched ? getHistory(null) : setHistoryFetched(true);
+  }, [history, historyFetched]);
+  
   return(
     <>
       <h2>History</h2>
@@ -43,16 +59,14 @@ const History = (props) => {
         <table>
           <tbody>
             <tr className='table-header'>
-              <th>Date<br />&nbsp;</th>
-              <th>Distance<br />(km)</th>
-              <th>Time<br />(h:m)</th>
-              <th>Pace<br />(km/h)</th>
+              <th title="Date"><FontAwesomeIcon icon={faCalendarAlt} /></th>
+              <th title="Distance"><FontAwesomeIcon icon={faRulerHorizontal} /></th>
+              <th title="Time"><FontAwesomeIcon icon={faClock} /></th>
+              <th title="Pace"><FontAwesomeIcon icon={faShoePrints} /></th>
             </tr>
             {historyFetched ? history.map(item => {
               return (
-                // <tr title={'Entered data from ' + item.date} onClick={(e) => handleLink(e, item)} key={item.id}>
-                // <tr title={'Entered data from ' + item.date} onClick={(e) => handleLink(e, item)} key={item.id}>
-                <tr title={'Entered data from ' + item.date} onClick={(e) => handleToUpdate(e, item)} key={item.id}>
+                <tr className="fade" title={'Entered data from ' + item.date} onClick={(e) => handleUpdate(e, item, history.length)} key={item.id}>
                   <td>{item.date}</td>
                   <td className='justifyRight'>{Number(item.distance).toFixed(2)}</td>
                   <td className='justifyRight'>{Number(item.time).toFixed(2)}</td>

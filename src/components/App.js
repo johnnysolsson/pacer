@@ -15,6 +15,7 @@ const Form = () => {
   const [time, setTime] = useState(resetTime);
   const [pace, setPace] = useState(resetPace);
   const [picker, setPicker] = useState('picker');
+  const [nextId, setNextId] = useState(0);
 
   // Reset all
   const handleReset = (e) => {
@@ -25,11 +26,13 @@ const Form = () => {
   };
 
   // Make setState reachable from child component
-  const updateObj = (e, obj) => {
+  const updateObj = (e, obj, length) => {
     e.preventDefault();
-    setDistance({...time, value: obj.distance});
+    setDistance({...distance, value: obj.distance});
     setTime({...time, value: obj.time});
-    setPace({...time, value: obj.pace});
+    setPace({...pace, value: obj.pace});
+    setNextId(length + 1);
+    console.log(nextId);
   };
 
   // FIXME: Should this be a real component?
@@ -68,8 +71,6 @@ const Form = () => {
         case 'pace':
           setPace({...pace, value: val});
           break;
-        default:
-          break;
       }
     }
   };
@@ -90,11 +91,41 @@ const Form = () => {
     }
   };
 
-  // TODO: Make the save function work 
+  const getToday = () => {
+    let today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    today = yyyy + '-' + mm + '-' + dd;
+    return today;
+  };
+
   // Handle save event
-  const handleSave = (e) => {
-    e.preventDefault(); 
-    alert('Entry saved with today\'s date');
+  const handleSave = async (e, obj) => {
+    e.preventDefault();
+    let response = '';
+    const presentDate = getToday();   
+    const data = {id: obj.nextId, date: presentDate, distance: obj.distance.value, time: obj.time.value, pace: obj.pace.value};
+    const url = 'http://localhost:4242/history';
+    try{
+      response = await fetch(url, {
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        redirect: 'follow',
+        referrer: 'no-referrer',
+      });
+    }catch (error){
+      console.error('Oh my! Got an error: ', error.message);
+    }
+    const result = await response.json();
+    alert('Entry saved with today\'s date\n' + result);
   };
 
   // Handle the event
@@ -108,10 +139,10 @@ const Form = () => {
     let outputForm = '';
     const alwaysShow = (
       <div className="buttons">
-        <button onClick={(e) => calcPicker(e, 'picker')}><FontAwesomeIcon icon={faLongArrowAltLeft} /> Back</button>
-        <button onClick={(e) => handleReset(e)}><FontAwesomeIcon icon={faUndo} /> Reset</button>
-        <button onClick={(e) => handleSubmit(e)}><FontAwesomeIcon icon={faCheck} /> Submit</button>
-        <button className="save" onClick={(e) => handleSave(e)}><FontAwesomeIcon icon={faSave} /> Save</button>
+        <button title="Go back" onClick={(e) => calcPicker(e, 'picker')}><FontAwesomeIcon icon={faLongArrowAltLeft} /></button>
+        <button title="Reset entries" onClick={(e) => handleReset(e)}><FontAwesomeIcon icon={faUndo} /></button>
+        <button title="Submit and calculate" onClick={(e) => handleSubmit(e)}><FontAwesomeIcon icon={faCheck} /></button>
+        <button title="Save this entry" className="save" onClick={(e) => handleSave(e, {nextId, distance, time, pace})}><FontAwesomeIcon icon={faSave} /></button>
       </div>
     );
     switch (picker) {
@@ -160,9 +191,9 @@ const Form = () => {
             <>
               <h2>Picker</h2>
               <p>Choose what to calculate</p>
-              <button onClick={(e) => calcPicker(e, 'distance')} title="Calculate distance"><FontAwesomeIcon icon={faRulerHorizontal} /> Distance</button>
-              <button onClick={(e) => calcPicker(e, 'time')} title="Calculate time"><FontAwesomeIcon icon={faClock} /> Time</button>
-              <button onClick={(e) => calcPicker(e, 'pace')} title="Calculate pace"><FontAwesomeIcon icon={faShoePrints} /> Pace</button>
+              <button title="Calculate distance" onClick={(e) => calcPicker(e, 'distance')}><FontAwesomeIcon icon={faRulerHorizontal}/></button>
+              <button title="Calculate time" onClick={(e) => calcPicker(e, 'time')}><FontAwesomeIcon icon={faClock} /></button>
+              <button title="Calculate pace" onClick={(e) => calcPicker(e, 'pace')}><FontAwesomeIcon icon={faShoePrints} /></button>
             </>
           );
         break;
@@ -184,7 +215,7 @@ const Form = () => {
       </div>
       <div className='grid-item'>
         <div className='right'>
-          <History handleToUpdate={updateObj.bind(this)} />
+          <History handleUpdate={updateObj.bind(this)} />
         </div>
       </div>
       <div className='grid-item'></div>

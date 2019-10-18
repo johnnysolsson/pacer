@@ -39,7 +39,6 @@ app.get('/', async (req, res) => {
 
 app.get('/history', async (req, res) => {
   try {
-    console.log('currentDir ', __dirname);
     const rawdata = fs.readFileSync(path.resolve(__dirname, './example.json'));
     const history = JSON.parse(rawdata);
     res.status(200).json(history);
@@ -49,10 +48,20 @@ app.get('/history', async (req, res) => {
   }
 });
 
-
-app.post('/history', async (req, res) => {
+// FIXME: Fix the error to get correct response
+app.put('/history', (req, res) => {
+  const fileName = path.resolve(__dirname, './example.json');
   if (req) {
-    //TODO: write request to local file using FS
+    try {
+      const rawdata = fs.readFileSync(path.resolve(__dirname, './example.json'));
+      const history = JSON.parse(rawdata);
+      history.push(req.body);
+      const save = fs.writeFile(fileName, JSON.stringify(history), 'utf8', callback => (callback));
+      res.status(200).json(save);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(`Server error ${err} at dir: ${__dirname}`);
+    }
   }
 });
 
