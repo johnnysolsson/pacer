@@ -32,10 +32,6 @@ const Form = () => {
     setTime({...time, value: obj.time});
     setPace({...pace, value: obj.pace});
     setNextId(length + 1);
-<<<<<<< HEAD
-=======
-    console.log(nextId);
->>>>>>> 3f1cc87cf4faeaddb0070dea5d45cdbc58dfc3fc
   };
 
   // FIXME: Should this be a real component?
