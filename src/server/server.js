@@ -38,8 +38,9 @@ app.get('/', async (req, res) => {
 
 
 app.get('/history', async (req, res) => {
+  const fileName = path.resolve(__dirname, './example.json');
   try {
-    const rawdata = fs.readFileSync(path.resolve(__dirname, './example.json'));
+    const rawdata = fs.readFileSync(fileName);
     const history = JSON.parse(rawdata);
     res.status(200).json(history);
   } catch (err) {
@@ -53,10 +54,12 @@ app.put('/history', (req, res) => {
   const fileName = path.resolve(__dirname, './example.json');
   if (req) {
     try {
-      const rawdata = fs.readFileSync(path.resolve(__dirname, './example.json'));
+      const rawdata = fs.readFileSync(fileName);
       const history = JSON.parse(rawdata);
       history.push(req.body);
-      const save = fs.writeFile(fileName, JSON.stringify(history), 'utf8', callback => (callback));
+      const save = fs.writeFile(fileName, JSON.stringify(history), 'utf8', (callback) => {
+        console.error(callback);
+      });
       res.status(200).json(save);
     } catch (err) {
       console.error(err);

@@ -1,7 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import History from './History';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faClock, faLongArrowAltLeft, faRulerHorizontal, faSave, faShoePrints, faUndo } from '@fortawesome/free-solid-svg-icons';
+
+const timeToDecimal = (inputTime) => {
+  inputTime = String(inputTime);
+  const hoursMinutes = inputTime.split(/[.:]/);
+  const hours = parseInt(hoursMinutes[0], 10);
+  const minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+  return hours + minutes / 60;
+};
 
 const Form = () => {
 
@@ -16,6 +24,7 @@ const Form = () => {
   const [pace, setPace] = useState(resetPace);
   const [picker, setPicker] = useState('picker');
   const [nextId, setNextId] = useState(0);
+  const [showSaveButton, setShowSaveButton] = useState(false);
 
   // Reset all
   const handleReset = (e) => {
@@ -23,6 +32,7 @@ const Form = () => {
     setDistance(resetDistance);
     setTime(resetTime);
     setPace(resetPace);
+    setShowSaveButton(false);
   };
 
   // Make setState reachable from child component
@@ -77,18 +87,36 @@ const Form = () => {
   // Handle submit event
   const handleSubmit = (e) => {
     e.preventDefault();
+    const timeInDecimal = timeToDecimal(time.value);
     switch (picker) {
       case 'distance':
-        setDistance({...distance, value: (time.value / pace.value).toFixed(2)});
+        setDistance({...distance, value: (timeInDecimal / pace.value).toFixed(2)});
         break;
       case 'time':
         setTime({...time, value: (distance.value / pace.value).toFixed(2)});
         break;
       case 'pace':
-        setPace({...pace, value: (distance.value / time.value).toFixed(2)});
+        setPace({...pace, value: (distance.value / timeInDecimal).toFixed(2)});
         break;
     }
   };
+
+  useEffect(() => {
+    if(distance.value && distance.value != null) {
+      if(pace.value != null && time.value != null) {
+        setShowSaveButton(true);
+      }
+    }
+  }, [distance.value, pace.value, time.value, setShowSaveButton]);
+
+  useEffect(() => {
+    if(pace.value && pace.value != null) {
+      if(distance.value != null && time.value != null) {
+        setShowSaveButton(true);
+      }
+    }
+  }, [pace.value, distance.value, time.value, setShowSaveButton]);
+
 
   const getToday = () => {
     let today = new Date();
@@ -141,7 +169,7 @@ const Form = () => {
         <button title="Go back" onClick={(e) => calcPicker(e, 'picker')}><FontAwesomeIcon icon={faLongArrowAltLeft} /></button>
         <button title="Reset entries" onClick={(e) => handleReset(e)}><FontAwesomeIcon icon={faUndo} /></button>
         <button title="Submit and calculate" onClick={(e) => handleSubmit(e)}><FontAwesomeIcon icon={faCheck} /></button>
-        <button title="Save this entry" className="save" onClick={(e) => handleSave(e, {nextId, distance, time, pace})}><FontAwesomeIcon icon={faSave} /></button>
+        {showSaveButton ? <button title="Save this entry" className="save" onClick={(e) => handleSave(e, {nextId, distance, time, pace})}><FontAwesomeIcon icon={faSave} /></button> : ''}
       </div>
     );
     switch (picker) {

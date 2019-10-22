@@ -6,6 +6,7 @@ const History = (props) => {
 
   const [history, setHistory] = useState([{}]);
   const [historyFetched, setHistoryFetched] = useState(false);
+  const [nextId, setNextId] = useState(0);
 
   const	handleUpdate	=	props.handleUpdate;
 
@@ -17,11 +18,10 @@ const History = (props) => {
     try{
       response = await fetch(url, {
         method: 'GET',
-        mode: 'cors',
         cache: 'no-cache',
-        credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/json',
+          'Content-Type': 'text/xml',
         },
         redirect: 'follow',
         referrer: 'no-referrer',
@@ -32,6 +32,9 @@ const History = (props) => {
 
     // Get the list from response
     let list = await response.json();
+
+    // Get last id and prepare nextId
+    setNextId((list[Object.keys(list).length-1].id));
 
     // Get only the last max number of entries from history
     list = list.filter((el, index) => {
@@ -66,7 +69,7 @@ const History = (props) => {
             </tr>
             {historyFetched ? history.map(item => {
               return (
-                <tr className="fade" title={'Entered data from ' + item.date} onClick={(e) => handleUpdate(e, item, history.length)} key={item.id}>
+                <tr className="fade" title={'Entered data from ' + item.date} onClick={(e) => handleUpdate(e, item, nextId)} key={item.id}>
                   <td>{item.date}</td>
                   <td className='justifyRight'>{Number(item.distance).toFixed(2)}</td>
                   <td className='justifyRight'>{Number(item.time).toFixed(2)}</td>
