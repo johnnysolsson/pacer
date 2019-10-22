@@ -6,7 +6,8 @@ import { faCheck, faClock, faLongArrowAltLeft, faRulerHorizontal, faSave, faShoe
 const timeToDecimal = (inputTime) => {
   inputTime = String(inputTime);
   const hoursMinutes = inputTime.split(/[.:]/);
-  const hours = parseInt(hoursMinutes[0], 10);
+  let hours = parseInt(hoursMinutes[0], 10);
+  isNaN(hours) || hours == null ? hours = 0 : undefined;
   const minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
   return hours + minutes / 60;
 };
