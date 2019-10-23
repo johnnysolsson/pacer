@@ -1,19 +1,10 @@
 import React, {useState, useEffect} from 'react';
+import {decimalToTime, getToday, isNumber, timeToDecimal} from './math';
 import History from './History';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faClock, faLongArrowAltLeft, faRulerHorizontal, faSave, faShoePrints, faUndo } from '@fortawesome/free-solid-svg-icons';
 
-const timeToDecimal = (inputTime) => {
-  inputTime = String(inputTime);
-  const hoursMinutes = inputTime.split(/[.:]/);
-  let hours = parseInt(hoursMinutes[0], 10);
-  isNaN(hours) || hours == null ? hours = 0 : undefined;
-  const minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
-  return hours + minutes / 60;
-};
-
 const Form = () => {
-
   // Set individual defaults
   const resetDistance = {name: 'distance', disabled: false, unit: 'km', value: null};
   const resetTime = {name: 'time', disabled: false, unit: 'h:m', value: null};
@@ -37,12 +28,12 @@ const Form = () => {
   };
 
   // Make setState reachable from child component
-  const updateObj = (e, obj, length) => {
+  const updateObj = (e, obj, nId) => {
     e.preventDefault();
     setDistance({...distance, value: obj.distance});
     setTime({...time, value: obj.time});
     setPace({...pace, value: obj.pace});
-    setNextId(length + 1);
+    setNextId(nId);
   };
 
   // FIXME: Should this be a real component?
@@ -88,16 +79,16 @@ const Form = () => {
   // Handle submit event
   const handleSubmit = (e) => {
     e.preventDefault();
-    const timeInDecimal = timeToDecimal(time.value);
     switch (picker) {
       case 'distance':
-        setDistance({...distance, value: (timeInDecimal / pace.value).toFixed(2)});
+        setDistance({...distance, value: (timeToDecimal(time.value) / pace.value).toFixed(2)});
         break;
       case 'time':
-        setTime({...time, value: (distance.value / pace.value).toFixed(2)});
+        // setTime({...time, value: decimalToTime((pace.value / distance.value)).toFixed(2)});
+        setTime({...time, value: decimalToTime((distance.value / pace.value)).toFixed(2)});
         break;
       case 'pace':
-        setPace({...pace, value: (distance.value / timeInDecimal).toFixed(2)});
+        setPace({...pace, value: (distance.value / timeToDecimal(time.value).toFixed(2))});
         break;
     }
   };
@@ -118,22 +109,12 @@ const Form = () => {
     }
   }, [pace.value, distance.value, time.value, setShowSaveButton]);
 
-
-  const getToday = () => {
-    let today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    today = yyyy + '-' + mm + '-' + dd;
-    return today;
-  };
-
   // Handle save event
   const handleSave = async (e, obj) => {
     e.preventDefault();
     let response = '';
-    const presentDate = getToday();   
-    const data = {id: obj.nextId, date: presentDate, distance: obj.distance.value, time: obj.time.value, pace: obj.pace.value};
+    const presentDate = getToday();
+    const data = {id: nextId, date: presentDate, distance: obj.distance.value, time: obj.time.value, pace: obj.pace.value};
     const url = 'http://localhost:4242/history';
     try{
       response = await fetch(url, {
@@ -143,11 +124,6 @@ const Form = () => {
           'Content-Type': 'application/json',
         },
         method: 'PUT',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        redirect: 'follow',
-        referrer: 'no-referrer',
       });
     }catch (error){
       console.error('Oh my! Got an error: ', error.message);
@@ -229,7 +205,6 @@ const Form = () => {
     return outputForm;
   };
 
-
   // Render the form
   return (
     <div className='grid-container'>
@@ -243,17 +218,12 @@ const Form = () => {
       </div>
       <div className='grid-item'>
         <div className='right'>
-          <History handleUpdate={updateObj.bind(this)} />
+          <History handleUpdate={updateObj.bind([this, this])} />
         </div>
       </div>
       <div className='grid-item'></div>
     </div>
   );
-};
-
-// Validate input to be number
-const isNumber = (validateMe) => {
-  return !isNaN(validateMe) || validateMe == null ? Number(validateMe) : false;
 };
 
 // Main component

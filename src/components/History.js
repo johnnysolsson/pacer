@@ -5,13 +5,11 @@ import { faCalendarAlt, faRulerHorizontal, faShoePrints, faClock } from '@fortaw
 const History = (props) => {
 
   const [history, setHistory] = useState([{}]);
-  const [historyFetched, setHistoryFetched] = useState(false);
   const [nextId, setNextId] = useState(0);
 
   const	handleUpdate	=	props.handleUpdate;
 
-  const getHistory = async (e) => {
-    e ? e.preventDefault() : undefined;
+  const getHistory = async () => {
     let response = '';
     const maxEntries = 5;
     const url = 'http://localhost:4242/history';
@@ -20,7 +18,6 @@ const History = (props) => {
         method: 'GET',
         cache: 'no-cache',
         headers: {
-          // 'Content-Type': 'application/json',
           'Content-Type': 'text/xml',
         },
         redirect: 'follow',
@@ -34,7 +31,7 @@ const History = (props) => {
     let list = await response.json();
 
     // Get last id and prepare nextId
-    setNextId((list[Object.keys(list).length-1].id));
+    setNextId((list[Object.keys(list).length-1].id + 1));
 
     // Get only the last max number of entries from history
     list = list.filter((el, index) => {
@@ -47,12 +44,11 @@ const History = (props) => {
     });
 
     setHistory(list);
-    setHistoryFetched(true);
   };
 
   useEffect(() => {
-    !historyFetched ? getHistory(null) : setHistoryFetched(true);
-  }, [history, historyFetched]);
+    history[0].id == undefined ? getHistory() : undefined;
+  }, [history]);
   
   return(
     <>
@@ -67,9 +63,9 @@ const History = (props) => {
               <th title="Time"><FontAwesomeIcon icon={faClock} /></th>
               <th title="Pace"><FontAwesomeIcon icon={faShoePrints} /></th>
             </tr>
-            {historyFetched ? history.map(item => {
+            {history.length >= 2 ? history.map(item => {
               return (
-                <tr className="fade" title={'Entered data from ' + item.date} onClick={(e) => handleUpdate(e, item, nextId)} key={item.id}>
+                <tr className="fade" title={'Entered data from ' + item.id} onClick={(e) => handleUpdate(e, item, nextId)} key={item.id}>
                   <td>{item.date}</td>
                   <td className='justifyRight'>{Number(item.distance).toFixed(2)}</td>
                   <td className='justifyRight'>{Number(item.time).toFixed(2)}</td>
